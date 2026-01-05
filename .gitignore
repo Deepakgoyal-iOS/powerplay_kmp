@@ -1,0 +1,34 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Local Android config
+local.properties
+
+# Kotlin/Native
+.konan/
+.kotlin/
+
+# iOS / Xcode
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+
+# CocoaPods
+Pods/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -11,13 +12,18 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
+    val xcFrameworkName = "XCPowerplayKMP"
+    val xcFramework = XCFramework(xcFrameworkName)
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "Shared"
+            baseName = xcFrameworkName
+            //binaryOption("bundleID", "org.example.${xcFrameworkName}")
+            xcFramework.add(this)
             isStatic = true
         }
     }
