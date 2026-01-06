@@ -2,6 +2,7 @@
 .gradle/
 build/
 **/build/
+!**/build/XCFrameworks/release/XCPowerplayKMP.xcframework
 
 # Android / IntelliJ
 .idea/
