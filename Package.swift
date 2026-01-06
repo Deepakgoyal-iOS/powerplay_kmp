@@ -2,7 +2,7 @@
 // Created by Deepak Goyal on 06/01/26.
 //
 
-// swift-tools-version:5.3
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
