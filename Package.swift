@@ -16,7 +16,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "XCPowerplayKMP",
-            url: "https://github.com/Deepakgoyal-iOS/powerplay_kmp/releases/download/v1.0/XCPowerplayKMP.xcframework.zip",
-            checksum:"ff6031679489559c934e518aa8e4214634a7dda2a68b18ee31ca5d0473d8f6bd")
+            path: "shared/build/XCFrameworks/release/XCPowerplayKMP.xcframework"
+        )
     ]
 )
