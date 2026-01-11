@@ -1,0 +1,52 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches:
+      - main
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  buildXC:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # STEP - 1 Checkout current repo [powerplay_kmp]
+    - name: Checkout source repository
+      uses: actions/checkout@v4
+      
+    # STEP - 2 Build XCFramework task for creating XCFramework file.
+    - name: Build XCFramework
+      run: ./gradlew :shared:assembleXCPowerplayKMPXCFramework
+      
+    # STEP - 3 Checkout package repo [XCPowerplayKMP]
+    - name: Checkout target repository
+      uses: actions/checkout@v4
+      with: 
+        repository: Deepakgoyal-iOS/XCPowerplayKMP
+        token: ${{ secrets.GH_PUSH_TOKEN }}
+        path: xcframework_repo
+
+    # STEP - 4 Copy XCFramework
+    - name: Copy XCFramework
+      run: |
+          rm -rf xcframework_repo/XCPowerplayKMP.xcframework
+          cp -R shared/build/XCFrameworks/release/XCPowerplayKMP.xcframework xcframework_repo/
+
+    # STEP - 5 Commit & Push to target repo
+    - name: Commit and push
+      run: |
+          cd xcframework_repo
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Update XCPowerplayKMP.xcframework" || echo "No changes to commit"
+          git push
+      
