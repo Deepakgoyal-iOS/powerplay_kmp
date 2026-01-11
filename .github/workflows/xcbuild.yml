@@ -31,7 +31,7 @@ jobs:
       uses: actions/checkout@v4
       with: 
         repository: Deepakgoyal-iOS/XCPowerplayKMP
-        token: ${{ secrets.PowerplaySourceTree }}
+        token: ${{ secrets.GIT_TOKEN }}
         path: xcframework_repo
 
     # STEP - 4 Copy XCFramework
