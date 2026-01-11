@@ -18,6 +18,15 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+
+     # STEP - 3 Checkout package repo [XCPowerplayKMP]
+    - name: Checkout target repository
+      uses: actions/checkout@v4
+      with: 
+        repository: Deepakgoyal-iOS/XCPowerplayKMP
+        token: ${{ secrets.GIT_TOKEN }}
+        path: xcframework_repo
+
     # STEP - 1 Checkout current repo [powerplay_kmp]
     - name: Checkout source repository
       uses: actions/checkout@v4
@@ -26,14 +35,7 @@ jobs:
     - name: Build XCFramework
       run: ./gradlew :shared:assembleXCPowerplayKMPXCFramework
       
-    # STEP - 3 Checkout package repo [XCPowerplayKMP]
-    - name: Checkout target repository
-      uses: actions/checkout@v4
-      with: 
-        repository: Deepakgoyal-iOS/XCPowerplayKMP
-        token: ${{ secrets.GIT_TOKEN }}
-        path: xcframework_repo
-
+   
     # STEP - 4 Copy XCFramework
     - name: Copy XCFramework
       run: |
