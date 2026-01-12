@@ -4,10 +4,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    id("maven-publish")
 }
 
 kotlin {
     androidTarget {
+        publishLibraryVariants("release")
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
@@ -49,3 +51,75 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
 }
+
+//publishing {
+//    repositories {
+//        group = "com.company.powerplay"
+//        version = providers.gradleProperty("MAVEN_VERSION")
+//        maven {
+//            name = "GitHubPackages"
+//            url = uri("https://maven.pkg.github.com/Deepakgoyal-iOS/powerplay_kmp")
+//            credentials {
+//                username = providers.gradleProperty("gpr.user").get()
+//                password = providers.gradleProperty("gpr.key").get()
+//            }
+//        }
+//    }
+//}
+////publishing{
+//    publications {
+//        create<MavenPublication>("xcframework") {
+//            groupId = "com.company.powerplay"
+//            artifactId = "xcpowerplaykmp"
+//            version = "1.0.1"
+//
+//            artifact(
+//                file("build/xcframeworkZip/XCPowerplayKMP.xcframework.zip")
+//            ){
+//                extension = "zip"
+//            }
+//        }
+//    }
+//
+//    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = uri("https://maven.pkg.github.com/Deepakgoyal-iOS/powerplay_kmp")
+//            credentials {
+//                username = providers.gradleProperty("gpr.user").get()
+//                password = providers.gradleProperty("gpr.key").get()
+//            }
+//        }
+//    }
+//}
+
+//tasks.register<Zip>("zipXcFramework") {
+//
+//    // 1️⃣ Make sure XCFramework is built first
+//    dependsOn("assembleXCPowerplayKMPXCFramework")
+//
+//    // 2️⃣ What to zip
+//    from(
+//        layout.buildDirectory.dir(
+//            "XCFrameworks/release/XCPowerplayKMP.xcframework"
+//        )
+//    )
+//
+//    // 3️⃣ Zip file name
+//    archiveFileName.set("XCPowerplayKMP.xcframework.zip")
+//
+//    // 4️⃣ Where zip will be created
+//    destinationDirectory.set(
+//        layout.buildDirectory.dir("xcframeworkZip")
+//    )
+//}
+
+//
+//tasks.register("exportToSwift") {
+//    val SDK_VERSION = "1.2.3"
+//    val API_BASE_URL = "https://api.example.com"
+//    doLast {
+//        println("export SDK_VERSION=${SDK_VERSION}")
+//        println("export API_BASE_URL=${API_BASE_URL}")
+//    }
+//}
