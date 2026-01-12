@@ -1,0 +1,59 @@
+# This is a basic workflow that is manually triggered
+
+name: Maven Publish workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches:
+      - main
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  publishMaven:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+
+    # STEP - 1 Checkout current repo [powerplay_kmp]
+    - name: Checkout source repository
+      uses: actions/checkout@v4
+      
+    # STEP - 2 Build XCFramework task for creating XCFramework file.
+    - name: Read current version
+      id: read
+      run: |
+          VERSION=$(grep "^MAVEN_VERSION=" local.properties | cut -d'=' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+    # STEP - 3 Checkout package repo [XCPowerplayKMP]
+    - name: Increment version
+      id: bump
+      run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${{ steps.read.outputs.version }}"
+          PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+          sed -i "s/^MAVEN_VERSION=.*/MAVEN_VERSION=$NEW_VERSION/" local.properties
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          
+    # STEP - 4 Commit & Push incremented version
+    - name: Commit and push
+      run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add local.properties
+          git commit -m "Automated: bump version to ${{ steps.bump.outputs.version }}" || echo "No changes to commit"
+          git push
+
+    - name: Publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+        VERSION_NAME: ${{ steps.bump.outputs.version }}
+      run: |
+          ./gradlew publishAndroidReleasePublicationToGitHubPackagesRepository
+      
