@@ -55,7 +55,7 @@ android {
 publishing {
     repositories {
         group = "com.company.powerplay"
-        version = providers.gradleProperty("MAVEN_VERSION")
+        version = providers.gradleProperty("MAVEN_VERSION").get()
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/Deepakgoyal-iOS/powerplay_kmp")
