@@ -52,20 +52,20 @@ android {
     }
 }
 
-//publishing {
-//    repositories {
-//        group = "com.company.powerplay"
-//        version = providers.gradleProperty("MAVEN_VERSION")
-//        maven {
-//            name = "GitHubPackages"
-//            url = uri("https://maven.pkg.github.com/Deepakgoyal-iOS/powerplay_kmp")
-//            credentials {
-//                username = providers.gradleProperty("gpr.user").get()
-//                password = providers.gradleProperty("gpr.key").get()
-//            }
-//        }
-//    }
-//}
+publishing {
+    repositories {
+        group = "com.company.powerplay"
+        version = providers.gradleProperty("MAVEN_VERSION")
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Deepakgoyal-iOS/powerplay_kmp")
+            credentials {
+                username = "Deepakgoyal-iOS"
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
 ////publishing{
 //    publications {
 //        create<MavenPublication>("xcframework") {
