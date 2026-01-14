@@ -38,6 +38,7 @@ jobs:
       run: |
           VERSION=$(grep "^version=" local.properties | cut -d'=' -f2)
           VERSION_TYPE=$(grep "^bump-version-type = " gradle/libs.versions.toml | cut -d'=' -f2 | tr -d ' "')
+          echo "versionType=$VERSION_TYPE"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "versionType=$VERSION_TYPE" >> $GITHUB_OUTPUT
       
