@@ -36,7 +36,7 @@ jobs:
     - name: Read current version
       id: read
       run: |
-          VERSION=$(grep "^MAVEN_VERSION=" local.properties | cut -d'=' -f2)
+          VERSION=$(grep "^version=" local.properties | cut -d'=' -f2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       
     # STEP - 3 Checkout package repo [XCPowerplayKMP]
@@ -47,10 +47,18 @@ jobs:
           PATCH=$((PATCH + 1))
           NEW_VERSION="$MAJOR.$MINOR.$PATCH"
 
-          sed -i "s/^MAVEN_VERSION=.*/MAVEN_VERSION=$NEW_VERSION/" local.properties
+          sed -i "s/^version=.*/version=$NEW_VERSION/" local.properties
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          
-    # STEP - 4 Commit & Push incremented version
+
+    # STEP - 4 Publish maven to github packages
+    - name: Publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+        VERSION_NAME: ${{ steps.bump.outputs.version }}
+      run: |
+          ./gradlew publishAndroidReleasePublicationToGitHubPackagesRepository
+
+      # STEP - 5 Commit & Push incremented version
     - name: Commit and push
       run: |
           git config user.name "github-actions"
@@ -58,11 +66,4 @@ jobs:
           git add local.properties
           git commit -m "Automated: bump version to ${{ steps.bump.outputs.version }}" || echo "No changes to commit"
           git push
-
-    - name: Publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-        VERSION_NAME: ${{ steps.bump.outputs.version }}
-      run: |
-          ./gradlew publishAndroidReleasePublicationToGitHubPackagesRepository
       
