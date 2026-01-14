@@ -37,35 +37,54 @@ jobs:
       id: read
       run: |
           VERSION=$(grep "^version=" local.properties | cut -d'=' -f2)
-          VERSION_TYPE=$(grep "^bump-version-type = " gradle/libs.versions.toml | cut -d'=' -f2 | tr -d ' "')
-          echo "versionType=$VERSION_TYPE"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "versionType=$VERSION_TYPE" >> $GITHUB_OUTPUT
-      
+          
+    # STEP - 3 Build XCFramework task for creating XCFramework file.
+    - name: Read feature type from commit message
+      id: feature
+      run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
+          echo "commit=$COMMIT_MSG" >> $GITHUB_OUTPUT
+          
     # STEP - 3 Checkout package repo [XCPowerplayKMP]
     - name: Increment version
       id: bump
       run: |
           IFS='.' read -r MAJOR MINOR PATCH <<< "${{ steps.read.outputs.version }}"
-          VERSION_TYPE="${{ steps.read.outputs.versionType }}"
+          COMMIT="${{ steps.feature.outputs.commit }}"
 
-          if [ "$VERSION_TYPE" = "0" ]; then
+          if [[ "$COMMIT" == *"major"* ]]; then
             echo "Major bump"
             MAJOR=$((MAJOR + 1))
             MINOR=0
             PATCH=0
 
-          elif [ "$VERSION_TYPE" = "1" ]; then
+          elif [[ "$COMMIT" == *"hotfix"* || "$COMMIT" == *"patch"* ]]; then
+            echo "Patch bump"
+            PATCH=$((PATCH + 1))
+            if [ "$PATCH" -gt 9 ]; then
+              echo "Patch overflow → Minor bump"
+                MINOR=$((MINOR + 1))
+                PATCH=0
+              fi
+
+          else
             echo "Minor bump"
             MINOR=$((MINOR + 1))
             PATCH=0
-
-          else
-            echo "Patch bump"
-            PATCH=$((PATCH + 1))
+            if [ "$MINOR" -gt 99 ]; then
+              echo "Minor overflow → Major bump"
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+            fi
+            
           fi
 
-          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+          MINOR_PADDED=$(printf "%02d" "$MINOR")
+          NEW_VERSION="$MAJOR.$MINOR_PADDED.$PATCH"
 
           sed -i "s/^version=.*/version=$NEW_VERSION/" local.properties
           echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
